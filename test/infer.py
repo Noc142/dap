@@ -15,20 +15,6 @@ from networks.models import *
 import OpenEXR
 import Imath
 
-# --------------------- 工具函数 ---------------------
-
-# def read_exr_depth(exr_path):
-#     exr_file = OpenEXR.InputFile(exr_path)
-#     header = exr_file.header()
-#     dw = header['dataWindow']
-#     size = (dw.max.x - dw.min.x + 1, dw.max.y - dw.min.y + 1)
-    
-#     FLOAT = Imath.PixelType(Imath.PixelType.FLOAT)
-#     depth_str = exr_file.channel('R', FLOAT)  
-#     depth = np.frombuffer(depth_str, dtype=np.float32)
-#     depth = np.reshape(depth, (size[1], size[0]))
-    
-#     return depth
 
 def colorize_depth(depth, colormap=cv2.COLORMAP_JET):
     depth_norm = (depth - np.min(depth)) / (np.max(depth) - np.min(depth) + 1e-6)
@@ -40,7 +26,6 @@ def ensure_dir(path):
 
 
 def load_model(config):
-    """加载模型"""
     model_path = os.path.join(config["load_weights_dir"], 'model.pth')
     print(f"🔹 Loading model weights from: {model_path}")
     model_dict = torch.load(model_path, map_location='cuda')
@@ -93,41 +78,29 @@ def infer_and_save(model, img_path, out_root, idx):
     print(f"✅ Saved pred only: {filename}")
 
 
-# --------------------- 主函数 ---------------------
 
 def main(config_path, txt_path, out_root):
-    # 读取配置
     with open(config_path, 'r') as f:
         config = yaml.load(f, Loader=yaml.FullLoader)
         print("✅ Config loaded.")
 
-    # 加载模型
     model = load_model(config)
 
-    # 读取txt
     with open(txt_path, 'r') as f:
         img_list = [l.strip() for l in f.readlines() if l.strip()]
-
-    # 将相对路径转换为绝对路径（相对于数据集根目录）
-    # img_list = [os.path.join(data_root, p) if not os.path.isabs(p) else p for p in img_list]
-
-    # print(f"🔹 Total images to infer: {len(img_list)}\n")
 
     for idx, img_path in enumerate(tqdm(img_list, desc="Inferencing"), start=1):
         infer_and_save(model, img_path, out_root, idx)
 
-    print(f"\n🎯 推理完成！")
-    print(f"   预测深度保存在: {out_root}/depth_npy 和 {out_root}/depth_vis")
-    print(f"   GT深度保存在: {out_root}/gt_depth_npy 和 {out_root}/gt_depth_vis")
+    print(f"  Pred depth: {out_root}/depth_npy 和 {out_root}/depth_vis")
 
-# --------------------- 程序入口 ---------------------
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', default='config/infer.yaml')
     parser.add_argument('--txt', default='datasets/dit_haoran.txt')
     parser.add_argument('--output', default='just_try')
-    parser.add_argument('--gpu', default='0', help='使用的GPU编号')
+    parser.add_argument('--gpu', default='0', help='GPU')
     args = parser.parse_args()
 
     os.environ['CUDA_DEVICE_ORDER'] = 'PCI_BUS_ID'
