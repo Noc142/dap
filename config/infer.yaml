@@ -1,11 +1,10 @@
 model:
-  name: panda
+  name: dap
   args:
     midas_model_type: vitl         
     fine_tune_type: hypersim       
     min_depth: 0.01
     max_depth: 1.0
-    lora: False                    
     train_decoder: True
 
 median_align: False
