@@ -31,7 +31,7 @@ class DAP(nn.Module):
         # Load the pretrained model of depth anything
         dinov3_repo_dir="./depth_anything_v2_metric/depth_anything_v2/dinov3"     # 你的本地 repo
         dinov3_arch="dinov3_vitl16"          
-        dinov3_weight="DINOv3/DINOv3 ViT LVD-1689M/dinov3_vitl16_pretrain_lvd1689m-8aa4cbdd.pth"
+        dinov3_weight=""
 
         depth_anything = DepthAnythingV2(
             **{**model_configs[midas_model_type], 'max_depth': 1.0},
