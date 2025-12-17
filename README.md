@@ -41,6 +41,12 @@ pip install -r requirements.txt
 
 The training dataset will be open soon.
 
+
+## 🤝 Pre-trained model
+
+Please download the pretrained model: https://huggingface.co/Insta360-Research/DAP-weights
+
+
 ## 📒 Inference
 
 ```Bash
