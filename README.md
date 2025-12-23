@@ -18,7 +18,6 @@ A Foundation Model for Panoramic Depth Estimation
 </p>
 
 
-
 <p align="center">
   <a href='https://arxiv.org/abs/2512.16913'><img src='https://img.shields.io/badge/arXiv-Paper-red?logo=arxiv&logoColor=white' alt='arXiv'></a>
   <a href='https://insta360-research-team.github.io/DAP_website/'><img src='https://img.shields.io/badge/Project_Page-Website-green?logo=insta360&logoColor=white' alt='Project Page'></a>
