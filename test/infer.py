@@ -143,7 +143,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", default="config/infer.yaml")
     parser.add_argument("--txt", default="datasets/test.txt")
-    parser.add_argument("--output", default="test_output")
+    parser.add_argument("--output", default="test_output_1")
     parser.add_argument("--gpu", default="0", help="使用的GPU编号")
 
     parser.add_argument("--vis", default="100m", choices=["100m", "10m"], help="可视化范围（只影响png，不影响npy）")
@@ -155,3 +155,10 @@ if __name__ == "__main__":
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
 
     main(args.config, args.txt, args.output, vis_range=args.vis, cmap=args.cmap)
+
+
+
+
+    # parser.add_argument("--config", default="config/infer.yaml")
+    # parser.add_argument("--txt", default="datasets/test.txt")
+    # parser.add_argument("--output", default="test_output_2048p")

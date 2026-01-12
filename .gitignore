@@ -1,0 +1,14 @@
+test_output
+test_output_1
+test_output_2048p
+*.pth
+jpgs
+pts
+pts_from_npy
+pts_stereo
+depth2point_fixed.py
+erp_all
+__pycache__/
+*.py[cod]
+*$py.class
+.vscode

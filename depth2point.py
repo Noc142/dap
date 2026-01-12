@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 import os
 from plyfile import PlyData, PlyElement
-import utils3d   # 你本地已有的库
 import torch
 
 def spherical_uv_to_directions(uv: np.ndarray):
@@ -13,6 +12,14 @@ def spherical_uv_to_directions(uv: np.ndarray):
         np.cos(phi)
     ], axis=-1)
     return directions
+
+
+def image_uv_np(width: int, height: int) -> np.ndarray:
+    """生成归一化的 UV 网格，u,v ∈ [0,1]，中心采样 (x+0.5)/W, (y+0.5)/H。"""
+    xs = (np.arange(width, dtype=np.float32) + 0.5) / float(width)
+    ys = (np.arange(height, dtype=np.float32) + 0.5) / float(height)
+    u, v = np.meshgrid(xs, ys)
+    return np.stack([u, v], axis=-1)
 
 def spherical_uv_to_directions_torch(uv: torch.Tensor):
     """
@@ -68,7 +75,7 @@ def depth2pointcloud(depth_path: str, image_path: str, out_ply: str):
         depth = depth / 65535.0
 
     h, w = depth.shape
-    uv = utils3d.numpy.image_uv(width=w, height=h)   # [H,W,2]
+    uv = image_uv_np(width=w, height=h)              # [H,W,2]
     dirs = spherical_uv_to_directions(uv)           # [H,W,3]
     points = depth[..., None] * dirs                # [H,W,3]
 
@@ -94,7 +101,7 @@ def depth2pts(depth):
     b, h, w = depth.shape
     
     # 生成UV坐标 [H,W,2]
-    uv = utils3d.numpy.image_uv(width=w, height=h)
+    uv = image_uv_np(width=w, height=h)
     # 转换为球面方向 [H,W,3]
     dirs = spherical_uv_to_directions(uv)
     
@@ -121,7 +128,7 @@ def depth2pts_torch(depth):
     b, h, w = depth.shape
     
     # 生成UV坐标 [H,W,2]
-    uv = utils3d.numpy.image_uv(width=w, height=h)
+    uv = image_uv_np(width=w, height=h)
     # 转换为torch tensor并移动到相同设备
     uv = torch.from_numpy(uv).to(depth.device).to(depth.dtype)
     
@@ -136,15 +143,16 @@ def depth2pts_torch(depth):
 
 
 if __name__ == "__main__":
-    # depth_path = "/home/tione/notebook/home/wenxuan/PanDA_dualhead_alltrain/visual_nonormalloss/depth/depth_save_2.png"   # 你的深度 PNG
-    # image_path = "/home/tione/notebook/home/wenxuan/PanDA_dualhead_alltrain/visual_nonormalloss/rgb/rgb_save_2.png"        # 你的原图 PNG
+    # depth_path = "/home/yangyi1_insta360.com/dap/test_output/depth_vis_color_100m"   # 你的深度 PNG
+    # image_path = "/home/yangyi1_insta360.com/dap/pngs"        # 你的原图 PNG
     # out_ply = "/home/tione/notebook/home/wenxuan/PanDA_dualhead_alltrain/visual_nonormalloss/pts/scene001_points.ply"
-    path_ = "/home/tione/notebook/home/wenxuan/DAM_dualhead_alltrain/vis_exp2_insta820/rgb/"
+    path_ = "/home/yangyi1_insta360.com/dap/pngs/"
     for file in os.listdir(path_):
         image_path = os.path.join(path_, file)
-        depth_path = os.path.join(path_.replace("rgb", "depth"), file.replace("rgb", "depth"))
-        os.makedirs(path_.replace("rgb", "pts"), exist_ok=True)
-        out_ply = os.path.join(path_.replace("rgb", "pts"), file.replace(".png", ".ply"))
+        # depth_path = os.path.join(path_.replace("rgb", "depth"), file.replace("rgb", "depth"))
+        depth_path = os.path.join(path_.replace("pngs", "test_output/depth_vis_gray_100m"), file)
+        os.makedirs(path_.replace("pngs", "pts"), exist_ok=True)
+        out_ply = os.path.join(path_.replace("pngs", "pts"), file.replace(".png", ".ply"))
         depth2pointcloud(depth_path, image_path, out_ply)
         
     # os.makedirs("output", exist_ok=True)
